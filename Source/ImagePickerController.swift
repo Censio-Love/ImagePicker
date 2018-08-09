@@ -14,7 +14,7 @@ open class ImagePickerController: UIViewController {
   let configuration: Configuration
 
   struct GestureConstants {
-    static let maximumHeight: CGFloat = 200
+    static let maximumHeight: CGFloat = 600
     static let minimumHeight: CGFloat = 125
     static let velocity: CGFloat = 100
   }
@@ -111,9 +111,16 @@ open class ImagePickerController: UIViewController {
   open override func viewDidLoad() {
     super.viewDidLoad()
 
-    for subview in [cameraController.view, galleryView, bottomContainer, topView] {
-      view.addSubview(subview!)
-      subview?.translatesAutoresizingMaskIntoConstraints = false
+    let views: [UIView]
+    if configuration.showCamera {
+      views = [cameraController.view, galleryView, bottomContainer, topView]
+    } else {
+      views = [galleryView, bottomContainer]
+    }
+    
+    for subview in views {
+      view.addSubview(subview)
+      subview.translatesAutoresizingMaskIntoConstraints = false
     }
 
     view.addSubview(volumeView)
@@ -122,7 +129,9 @@ open class ImagePickerController: UIViewController {
     view.backgroundColor = UIColor.white
     view.backgroundColor = configuration.mainColor
 
-    cameraController.view.addGestureRecognizer(panGestureRecognizer)
+    if configuration.showCamera {
+      cameraController.view.addGestureRecognizer(panGestureRecognizer)
+    }
 
     subscribe()
     setupConstraints()
